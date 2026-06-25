@@ -73,7 +73,7 @@ h1{font-size:17px;font-weight:600;margin-bottom:10px}
 .row .mn{font-weight:600;font-size:14px;white-space:nowrap}
 .acc{display:flex;gap:4px;flex-shrink:0}
 .acc button{border:0;background:#f8fafc;cursor:pointer;font-size:12px;font-weight:600;padding:8px 10px;border-radius:8px;min-height:36px;min-width:36px;display:flex;align-items:center;justify-content:center}
-.acc .pg{color:#15803d;background:#f0fdf4}.acc .undo{color:#b45309;background:#fffbeb}
+.acc .pg{color:#fff;background:#15803d;font-size:12px;padding:8px 12px;min-width:auto;border-radius:8px;font-weight:700;letter-spacing:.01em}.acc .undo{color:#b45309;background:#fffbeb;font-size:11px}
 .acc .edt{color:#475569;background:#f1f5f9}.acc .del{color:#dc2626;background:#fef2f2}
 .pcard{background:#fff;border:1px solid #e8edf3;border-radius:14px;padding:14px;margin-bottom:10px}
 .pcard .ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
@@ -394,7 +394,7 @@ function render(){
       if(f.cp)cpArr.push(esc(f.cp)+(f.cn?" · "+esc(f.cn):""));
       var cp=cpArr.length?'<div class="cp">✓ '+cpArr.join(" · ")+'</div>':"";
       var mt=e==="pagada"?"Pagada en <b>"+mLbl(f.pm)+"</b>":"Vence <b>"+fs+"</b> · "+rel;
-      var btns=e==="pagada"?'<button class="undo" onclick="doUndo(\''+f.id+'\')">↩</button>':'<button class="pg" onclick="doPg(\''+f.id+'\')">✓</button>';
+      var btns=e==="pagada"?'<button class="undo" onclick="doUndo(\''+f.id+'\')">↩</button>':'<button class="pg" onclick="doPg(\''+f.id+'\')">✓ Pagar</button>';
       btns+='<button class="edt" onclick="doEdit(\''+f.id+'\')">✎</button><button class="del" onclick="doDel(\''+f.id+'\')">✕</button>';
       return'<div class="row '+(e==="pagada"?"pagada":e)+'"><div class="info"><div class="nm">'+esc(f.n)+pt+'</div><div class="meta">'+esc(f.c)+' · '+mt+'</div>'+(f.no?'<div class="nt">'+esc(f.no)+'</div>':'')+cp+'</div><div class="mn">'+cop(f.m)+'</div><div class="acc">'+btns+'</div></div>';
     }).join("");
@@ -669,6 +669,25 @@ function showToast(msg,err){
 }
 
 load();
+
+function markSusPaid(id){
+  var s=S.find(function(x){return x.id===id});if(!s)return;
+  s.pm_mes=mAct();
+  // Calculate next cobro date
+  if(s.proximo_cobro){
+    var d=new Date(s.proximo_cobro);
+    if(s.frecuencia==="anual")d.setFullYear(d.getFullYear()+1);
+    else d.setMonth(d.getMonth()+1);
+    s.proximo_cobro=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  }
+  sbUp("suscripciones",[{id:s.id,n:s.n,servicio:s.servicio,categoria:s.categoria,monto:s.monto,moneda:s.moneda,frecuencia:s.frecuencia,tarjeta:s.tarjeta,proximo_cobro:s.proximo_cobro,activa:s.activa,notas:s.notas,pm_mes:s.pm_mes}]).then(function(){render();showToast("✓ Suscripción marcada pagada.")});
+}
+function markSusUnpaid(id){
+  var s=S.find(function(x){return x.id===id});if(!s)return;
+  s.pm_mes=null;
+  sbUp("suscripciones",[{id:s.id,n:s.n,servicio:s.servicio,categoria:s.categoria,monto:s.monto,moneda:s.moneda,frecuencia:s.frecuencia,tarjeta:s.tarjeta,proximo_cobro:s.proximo_cobro,activa:s.activa,notas:s.notas,pm_mes:null}]).then(function(){render();showToast("Marcada como pendiente.")});
+}
+
 </script>
 </body>
 </html>
