@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<!-- v202606251307--><title>Control de Pagos – GVC Capital</title>
+<title>Control de Pagos – GVC Capital</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%230d2138'/%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Ccircle cx='50' cy='50' r='44'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23c)'%3E%3Cpolygon points='92,50 79.7,79.7 62.7,62.7' fill='%235cc1ea'/%3E%3Cpolygon points='92,50 62.7,62.7 68,50' fill='%232aa9e0'/%3E%3Cpolygon points='79.7,79.7 50,92 50,68' fill='%234a93cf'/%3E%3Cpolygon points='79.7,79.7 50,68 62.7,62.7' fill='%231c75bc'/%3E%3Cpolygon points='50,92 20.3,79.7 37.3,62.7' fill='%23f155a6'/%3E%3Cpolygon points='50,92 37.3,62.7 50,68' fill='%23ec268f'/%3E%3Cpolygon points='20.3,79.7 8,50 32,50' fill='%23f24e6e'/%3E%3Cpolygon points='20.3,79.7 32,50 37.3,62.7' fill='%23ed1c45'/%3E%3Cpolygon points='8,50 20.3,20.3 37.3,37.3' fill='%235fc66d'/%3E%3Cpolygon points='8,50 37.3,37.3 32,50' fill='%2339b54a'/%3E%3Cpolygon points='20.3,20.3 50,8 50,32' fill='%23a9d56b'/%3E%3Cpolygon points='20.3,20.3 50,32 37.3,37.3' fill='%238dc63f'/%3E%3Cpolygon points='50,8 79.7,20.3 62.7,37.3' fill='%23fcc673'/%3E%3Cpolygon points='50,8 62.7,37.3 50,32' fill='%23fbb040'/%3E%3Cpolygon points='79.7,20.3 92,50 68,50' fill='%23f9ad4f'/%3E%3Cpolygon points='79.7,20.3 68,50 62.7,37.3' fill='%23f7941e'/%3E%3C/g%3E%3C/svg%3E">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -129,31 +129,25 @@ h1{font-size:17px;font-weight:600;margin-bottom:10px}
   .mdl{border-radius:16px}
 }
 
-/* Suscripciones */
-.sus-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.sus-header .sh-total{font-size:13px;color:#64748b}
-.sus-header .sh-total b{color:#1e293b;font-size:15px}
-.sus-card{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:12px;margin-bottom:7px;display:flex;align-items:center;gap:12px}
-.sus-card.inactiva{opacity:.5}
-.sus-card .si{width:40px;height:40px;border-radius:10px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.sus-card .sinfo{flex:1;min-width:0}
-.sus-card .sn{font-weight:600;font-size:14px}
-.sus-card .smeta{font-size:12px;color:#94a3b8;margin-top:2px}
-.sus-card .smeta b{color:#475569}
-.sus-card .stag{font-size:10px;font-weight:600;border-radius:999px;padding:1px 7px;margin-left:4px}
-.sus-card .stag.men{color:#6366f1;background:#eef2ff}
-.sus-card .stag.anu{color:#0369a1;background:#e0f2fe}
-.sus-card .smonto{text-align:right}
-.sus-card .smonto .mv{font-weight:700;font-size:15px}
-.sus-card .smonto .mf{font-size:10px;color:#94a3b8}
-.sus-card .sacc{display:flex;gap:4px;flex-shrink:0}
-.sus-card .sacc button{border:0;background:#f8fafc;cursor:pointer;font-size:12px;font-weight:600;padding:7px 9px;border-radius:8px;min-height:32px;min-width:32px;display:flex;align-items:center;justify-content:center}
-.sus-grp{margin-bottom:16px}
-.sus-grp-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;padding:0 2px}
-.sus-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-.sus-sum-card{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:10px 12px}
-.sus-sum-card .sl{font-size:10px;color:#94a3b8;margin-bottom:3px}
-.sus-sum-card .sv{font-size:15px;font-weight:700}
+.sus-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.sus-sum .tot{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:10px 12px}
+.sus-sum .tot .tl{font-size:10px;color:#94a3b8;margin-bottom:3px}
+.sus-sum .tot .tv{font-size:15px;font-weight:600}
+.sus-grp-lbl{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px;padding:0 2px}
+.srow{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:11px 12px;margin-bottom:7px}
+.srow.off{opacity:.5}
+.srow .si{font-size:20px;width:36px;text-align:center;flex-shrink:0}
+.srow .sinfo{flex:1;min-width:0}
+.srow .sn{font-weight:600;font-size:14px}
+.srow .sm{font-size:12px;color:#94a3b8;margin-top:2px}
+.srow .sm b{color:#475569}
+.stag{font-size:10px;font-weight:600;border-radius:999px;padding:1px 7px;margin-left:5px}
+.stag.men{color:#6366f1;background:#eef2ff}
+.stag.anu{color:#0369a1;background:#e0f2fe}
+.srow .smn{text-align:right;flex-shrink:0}
+.srow .smn .mv{font-weight:700;font-size:14px}
+.srow .smn .mf{font-size:10px;color:#94a3b8}
+
 </style>
 </head><body>
 <div id="app">
@@ -423,50 +417,60 @@ function render(){
 
 
   if(vista==="suscripciones"){
-    var activas=S.filter(function(s){return s.activa});
-    var inactivas=S.filter(function(s){return !s.activa});
-    var totalMes=activas.reduce(function(sum,s){
-      if(s.moneda!=="COP")return sum;
-      return sum+(s.frecuencia==="anual"?Math.round(s.monto/12):s.monto);
-    },0);
-    var totalAnual=activas.reduce(function(sum,s){
-      if(s.moneda!=="COP")return sum;
-      return sum+(s.frecuencia==="anual"?s.monto:s.monto*12);
-    },0);
-    // Group by tarjeta
-    var tarjetas={};
-    activas.forEach(function(s){var t=s.tarjeta||"Sin tarjeta";if(!tarjetas[t])tarjetas[t]=[];tarjetas[t].push(s)});
-    var html='<div class="sus-summary">';
-    html+='<div class="sus-sum-card"><div class="sl">Activas</div><div class="sv">'+activas.length+'</div></div>';
-    html+='<div class="sus-sum-card"><div class="sl">Costo mensual</div><div class="sv" style="color:#0d2138">'+cop(totalMes)+'</div></div>';
-    html+='<div class="sus-sum-card"><div class="sl">Costo anual</div><div class="sv" style="color:#475569">'+cop(totalAnual)+'</div></div>';
+    var activas=S.filter(function(x){return x.activa});
+    var inactivas=S.filter(function(x){return !x.activa});
+    var totalMes=0;
+    var totalAnual=0;
+    activas.forEach(function(x){
+      if(x.moneda==="COP"){
+        totalMes+=(x.frecuencia==="anual"?Math.round(x.monto/12):x.monto);
+        totalAnual+=(x.frecuencia==="anual"?x.monto:x.monto*12);
+      }
+    });
+    var html='<div class="sus-sum">';
+    html+='<div class="tot"><div class="tl">Activas</div><div class="tv">'+activas.length+'</div></div>';
+    html+='<div class="tot"><div class="tl">Costo mensual</div><div class="tv" style="color:#0d2138">'+cop(totalMes)+'</div></div>';
+    html+='<div class="tot"><div class="tl">Costo anual</div><div class="tv">'+cop(totalAnual)+'</div></div>';
     html+='</div>';
+    var tarjetas={};
+    activas.forEach(function(x){
+      var t=x.tarjeta||"Sin tarjeta";
+      if(!tarjetas[t])tarjetas[t]=[];
+      tarjetas[t].push(x);
+    });
+    var icons={"Salud":"🏃","Entretenimiento":"🎬","Productividad":"⚡","IA / Tech":"🤖","Música":"🎵","Noticias":"📰","Almacenamiento":"💾","Otros":"📦"};
     Object.keys(tarjetas).sort().forEach(function(t){
       var list=tarjetas[t];
-      var tTotal=list.reduce(function(sum,s){return sum+(s.frecuencia==="anual"?Math.round(s.monto/12):s.monto)},0);
-      html+='<div class="sus-grp"><div class="sus-grp-title">'+esc(t)+' · '+cop(tTotal)+'/mes</div>';
-      list.forEach(function(s){
-        var icon={"Salud":"🏃","Entretenimiento":"🎬","Productividad":"⚡","IA / Tech":"🤖","Música":"🎵","Noticias":"📰","Almacenamiento":"💾","Otros":"📦"}[s.categoria]||"📦";
-        var frqTag=s.frecuencia==="anual"?'<span class="stag anu">Anual</span>':'<span class="stag men">Mensual</span>';
-        var montoMes=s.frecuencia==="anual"?Math.round(s.monto/12):s.monto;
-        var proxFmt=s.proximo_cobro?fmtDate(s.proximo_cobro):"—";
-        html+='<div class="sus-card'+(s.activa?"":" inactiva")+'"><div class="si">'+icon+'</div>';
-        html+='<div class="sinfo"><div class="sn">'+esc(s.n)+frqTag+'</div>';
-        html+='<div class="smeta">'+esc(s.servicio||"")+(s.notas?' · <span style="font-style:italic">'+esc(s.notas)+'</span>':'')+'</div>';
-        html+='<div class="smeta">Próximo cobro: <b>'+proxFmt+'</b></div></div>';
-        html+='<div class="smonto"><div class="mv">'+cop(montoMes)+'</div><div class="mf">/mes</div></div>';
-        html+='<div class="sacc"><button class="edt" onclick="editSus(''+s.id+'')">✎</button><button class="del" onclick="delSus(''+s.id+'')">✕</button></div></div>';
+      var tTotal=list.reduce(function(s,x){return s+(x.frecuencia==="anual"?Math.round(x.monto/12):x.monto)},0);
+      html+='<div class="sus-grp-lbl">'+esc(t)+' &middot; '+cop(tTotal)+'/mes</div>';
+      list.forEach(function(x){
+        var icon=icons[x.categoria]||"📦";
+        var tag=x.frecuencia==="anual"?'<span class="stag anu">Anual</span>':'<span class="stag men">Mensual</span>';
+        var mes=x.frecuencia==="anual"?Math.round(x.monto/12):x.monto;
+        var prox=x.proximo_cobro?fmtDate(x.proximo_cobro):"—";
+        html+='<div class="srow">';
+        html+='<div class="si">'+icon+'</div>';
+        html+='<div class="sinfo">';
+        html+='<div class="sn">'+esc(x.n)+tag+'</div>';
+        html+='<div class="sm">'+esc(x.categoria||"")+(x.notas?" &middot; "+esc(x.notas):"")+'</div>';
+        html+='<div class="sm">Próximo: <b>'+prox+'</b></div>';
+        html+='</div>';
+        html+='<div class="smn"><div class="mv">'+cop(mes)+'</div><div class="mf">/mes</div></div>';
+        html+='<div class="acc"><button class="edt" onclick="editSus('+JSON.stringify(x.id)+')">✎</button>';
+        html+='<button class="del" onclick="delSus('+JSON.stringify(x.id)+')">✕</button></div>';
+        html+='</div>';
       });
-      html+='</div>';
     });
     if(inactivas.length){
-      html+='<div class="sus-grp"><div class="sus-grp-title">Inactivas ('+inactivas.length+')</div>';
-      inactivas.forEach(function(s){
-        html+='<div class="sus-card inactiva"><div class="si">📦</div><div class="sinfo"><div class="sn">'+esc(s.n)+'</div><div class="smeta">'+esc(s.tarjeta||"")+'</div></div><div class="smonto"><div class="mv">'+cop(s.monto)+'</div></div><div class="sacc"><button class="edt" onclick="editSus(''+s.id+'')">✎</button><button class="del" onclick="delSus(''+s.id+'')">✕</button></div></div>';
+      html+='<div class="sus-grp-lbl">Inactivas</div>';
+      inactivas.forEach(function(x){
+        html+='<div class="srow off"><div class="si">📦</div><div class="sinfo"><div class="sn">'+esc(x.n)+'</div><div class="sm">'+esc(x.tarjeta||"")+'</div></div>';
+        html+='<div class="smn"><div class="mv">'+cop(x.monto)+'</div></div>';
+        html+='<div class="acc"><button class="edt" onclick="editSus('+JSON.stringify(x.id)+')">✎</button>';
+        html+='<button class="del" onclick="delSus('+JSON.stringify(x.id)+')">✕</button></div></div>';
       });
-      html+='</div>';
     }
-    html+='<button onclick="openSusModal(null)" style="width:100%;padding:12px;background:#f1f5f9;border:1px dashed #cbd5e1;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;font-weight:600">+ Nueva suscripción</button>';
+    html+='<button onclick="openSusModal(null)" style="width:100%;padding:12px;background:#f1f5f9;border:1px dashed #cbd5e1;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;font-weight:600;margin-top:4px">+ Nueva suscripción</button>';
     ct.innerHTML=html;
   }
 
@@ -567,7 +571,7 @@ function exportarPDF(){
   var pagadas=F.filter(function(f){return est(f)==="pagada"});
   var d=hoy();
   var w=window.open("","_blank");
-  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><!-- v202606251307--><title>Control de Pagos – GVC Capital</title><style>');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Control de Pagos – GVC Capital</title><style>');
   w.document.write('body{font-family:-apple-system,sans-serif;color:#1e293b;padding:40px;max-width:700px;margin:0 auto}');
   w.document.write('h1{font-size:22px;font-weight:700;margin-bottom:4px}');
   w.document.write('.sub{font-size:13px;color:#64748b;margin-bottom:24px}');
@@ -579,31 +583,25 @@ function exportarPDF(){
   w.document.write('.footer{font-size:11px;color:#94a3b8;margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px}');
   w.document.write('@media print{body{padding:20px}}');
   w.document.write('
-/* Suscripciones */
-.sus-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.sus-header .sh-total{font-size:13px;color:#64748b}
-.sus-header .sh-total b{color:#1e293b;font-size:15px}
-.sus-card{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:12px;margin-bottom:7px;display:flex;align-items:center;gap:12px}
-.sus-card.inactiva{opacity:.5}
-.sus-card .si{width:40px;height:40px;border-radius:10px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.sus-card .sinfo{flex:1;min-width:0}
-.sus-card .sn{font-weight:600;font-size:14px}
-.sus-card .smeta{font-size:12px;color:#94a3b8;margin-top:2px}
-.sus-card .smeta b{color:#475569}
-.sus-card .stag{font-size:10px;font-weight:600;border-radius:999px;padding:1px 7px;margin-left:4px}
-.sus-card .stag.men{color:#6366f1;background:#eef2ff}
-.sus-card .stag.anu{color:#0369a1;background:#e0f2fe}
-.sus-card .smonto{text-align:right}
-.sus-card .smonto .mv{font-weight:700;font-size:15px}
-.sus-card .smonto .mf{font-size:10px;color:#94a3b8}
-.sus-card .sacc{display:flex;gap:4px;flex-shrink:0}
-.sus-card .sacc button{border:0;background:#f8fafc;cursor:pointer;font-size:12px;font-weight:600;padding:7px 9px;border-radius:8px;min-height:32px;min-width:32px;display:flex;align-items:center;justify-content:center}
-.sus-grp{margin-bottom:16px}
-.sus-grp-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;padding:0 2px}
-.sus-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
-.sus-sum-card{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:10px 12px}
-.sus-sum-card .sl{font-size:10px;color:#94a3b8;margin-bottom:3px}
-.sus-sum-card .sv{font-size:15px;font-weight:700}
+.sus-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.sus-sum .tot{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:10px 12px}
+.sus-sum .tot .tl{font-size:10px;color:#94a3b8;margin-bottom:3px}
+.sus-sum .tot .tv{font-size:15px;font-weight:600}
+.sus-grp-lbl{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin:14px 0 6px;padding:0 2px}
+.srow{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:11px 12px;margin-bottom:7px}
+.srow.off{opacity:.5}
+.srow .si{font-size:20px;width:36px;text-align:center;flex-shrink:0}
+.srow .sinfo{flex:1;min-width:0}
+.srow .sn{font-weight:600;font-size:14px}
+.srow .sm{font-size:12px;color:#94a3b8;margin-top:2px}
+.srow .sm b{color:#475569}
+.stag{font-size:10px;font-weight:600;border-radius:999px;padding:1px 7px;margin-left:5px}
+.stag.men{color:#6366f1;background:#eef2ff}
+.stag.anu{color:#0369a1;background:#e0f2fe}
+.srow .smn{text-align:right;flex-shrink:0}
+.srow .smn .mv{font-weight:700;font-size:14px}
+.srow .smn .mf{font-size:10px;color:#94a3b8}
+
 </style></head><body>');
   w.document.write('<h1>Control de Pagos – GVC Capital</h1>');
   w.document.write('<div class="sub">Generado el '+d.getDate()+" "+MS[d.getMonth()]+" "+d.getFullYear()+' · Período viaje: '+fmtDate(delDesde)+' al '+fmtDate(delHasta)+'</div>');
@@ -622,13 +620,9 @@ function exportarPDF(){
   w.document.write('
 <div id="susModal" class="mbg"><div class="mdl">
   <div class="mh"><b id="susTit"></b><button class="mx" onclick="closeSusModal()">×</button></div>
-  <label>Nombre del servicio<input id="sn"></label>
+  <label>Nombre<input id="sn"></label>
   <div class="g2">
-    <label>Categoría<select id="scat">
-      <option>Salud</option><option>Entretenimiento</option><option>Productividad</option>
-      <option>IA / Tech</option><option>Música</option><option>Noticias</option>
-      <option>Almacenamiento</option><option>Otros</option>
-    </select></label>
+    <label>Categoría<select id="scat"><option>Salud</option><option>Entretenimiento</option><option>Productividad</option><option>IA / Tech</option><option>Música</option><option>Noticias</option><option>Almacenamiento</option><option>Otros</option></select></label>
     <label>Frecuencia<select id="sfr"><option value="mensual">Mensual</option><option value="anual">Anual</option></select></label>
   </div>
   <div class="g2">
@@ -637,10 +631,8 @@ function exportarPDF(){
   </div>
   <label>Tarjeta de cobro<input id="stc" placeholder="TC Bancolombia *7910…"></label>
   <label>Próximo cobro<input id="spc" type="date"></label>
-  <label>Descripción / notas<input id="sno"></label>
-  <label style="display:flex;align-items:center;gap:8px;margin-top:6px">
-    <input type="checkbox" id="sact" style="width:auto;margin:0"> Activa
-  </label>
+  <label>Notas<input id="sno"></label>
+  <label style="display:flex;align-items:center;gap:8px;margin-top:6px;cursor:pointer"><input type="checkbox" id="sact" style="width:auto;margin:0"> Activa</label>
   <div class="mbtns"><button class="mbtn-c" onclick="closeSusModal()">Cancelar</button><button class="mbtn-g" onclick="saveSus()">Guardar</button></div>
 </div></div>
 
@@ -709,7 +701,7 @@ load();
 var susEditId=null;
 function openSusModal(s){
   susEditId=s?s.id:null;
-  document.getElementById("susTit").textContent=s?"Editar suscripción":"Nueva suscripción";
+  document.getElementById("susTit").textContent=s?"Editar":"Nueva suscripción";
   document.getElementById("sn").value=s?s.n:"";
   document.getElementById("scat").value=s?(s.categoria||"Otros"):"Otros";
   document.getElementById("sfr").value=s?(s.frecuencia||"mensual"):"mensual";
@@ -718,49 +710,33 @@ function openSusModal(s){
   document.getElementById("stc").value=s?(s.tarjeta||""):"";
   document.getElementById("spc").value=s?(s.proximo_cobro||""):"";
   document.getElementById("sno").value=s?(s.notas||""):"";
-  document.getElementById("sact").checked=s?s.activa:true;
+  document.getElementById("sact").checked=s?!!s.activa:true;
   document.getElementById("susModal").classList.add("open");
 }
-function closeSusModal(){document.getElementById("susModal").classList.remove("open")}
-function editSus(id){openSusModal(S.find(function(s){return s.id===id}))}
+function closeSusModal(){document.getElementById("susModal").classList.remove("open");}
+function editSus(id){openSusModal(S.find(function(s){return s.id===id}));}
 function delSus(id){
   S=S.filter(function(s){return s.id!==id});
-  fetch(SB_URL+"/rest/v1/suscripciones?id=eq."+encodeURIComponent(id),{method:"DELETE",headers:sbH()}).then(function(){render();showToast("Suscripción eliminada.")});
+  fetch(SB_URL+"/rest/v1/suscripciones?id=eq."+encodeURIComponent(id),{method:"DELETE",headers:sbH()}).then(function(){render();showToast("Eliminada.");});
 }
 function saveSus(){
   var n=document.getElementById("sn").value.trim();
-  if(!n){showToast("Ingresa el nombre.",true);return}
-  var row={
-    id:susEditId||("s"+Date.now()),
-    n:n,
-    servicio:document.getElementById("scat").value,
-    categoria:document.getElementById("scat").value,
-    monto:Number(document.getElementById("sm").value)||0,
-    moneda:document.getElementById("smon").value,
-    frecuencia:document.getElementById("sfr").value,
-    tarjeta:document.getElementById("stc").value.trim(),
-    proximo_cobro:document.getElementById("spc").value||null,
-    activa:document.getElementById("sact").checked,
-    notas:document.getElementById("sno").value.trim()
-  };
-  if(susEditId){var idx=S.findIndex(function(s){return s.id===susEditId});if(idx>-1)S[idx]=row;}
+  if(!n){showToast("Ingresa el nombre.",true);return;}
+  var row={id:susEditId||("s"+Date.now()),n:n,servicio:document.getElementById("scat").value,categoria:document.getElementById("scat").value,monto:Number(document.getElementById("sm").value)||0,moneda:document.getElementById("smon").value,frecuencia:document.getElementById("sfr").value,tarjeta:document.getElementById("stc").value.trim(),proximo_cobro:document.getElementById("spc").value||null,activa:document.getElementById("sact").checked,notas:document.getElementById("sno").value.trim()};
+  if(susEditId){var idx=S.findIndex(function(s){return s.id===susEditId});if(idx>-1)S[idx]=row;else S.push(row);}
   else S.push(row);
-  sbUpsert("suscripciones",[row]).then(function(){render();showToast("✓ Suscripción guardada.")});
+  sbUpsert("suscripciones",[row]).then(function(){render();showToast("✓ Guardado.");});
   closeSusModal();
 }
-document.getElementById("susModal").addEventListener("click",function(e){if(e.target.id==="susModal")closeSusModal()});
+document.getElementById("susModal").addEventListener("click",function(e){if(e.target.id==="susModal")closeSusModal();});
 
 </script>
 
 <div id="susModal" class="mbg"><div class="mdl">
   <div class="mh"><b id="susTit"></b><button class="mx" onclick="closeSusModal()">×</button></div>
-  <label>Nombre del servicio<input id="sn"></label>
+  <label>Nombre<input id="sn"></label>
   <div class="g2">
-    <label>Categoría<select id="scat">
-      <option>Salud</option><option>Entretenimiento</option><option>Productividad</option>
-      <option>IA / Tech</option><option>Música</option><option>Noticias</option>
-      <option>Almacenamiento</option><option>Otros</option>
-    </select></label>
+    <label>Categoría<select id="scat"><option>Salud</option><option>Entretenimiento</option><option>Productividad</option><option>IA / Tech</option><option>Música</option><option>Noticias</option><option>Almacenamiento</option><option>Otros</option></select></label>
     <label>Frecuencia<select id="sfr"><option value="mensual">Mensual</option><option value="anual">Anual</option></select></label>
   </div>
   <div class="g2">
@@ -769,10 +745,8 @@ document.getElementById("susModal").addEventListener("click",function(e){if(e.ta
   </div>
   <label>Tarjeta de cobro<input id="stc" placeholder="TC Bancolombia *7910…"></label>
   <label>Próximo cobro<input id="spc" type="date"></label>
-  <label>Descripción / notas<input id="sno"></label>
-  <label style="display:flex;align-items:center;gap:8px;margin-top:6px">
-    <input type="checkbox" id="sact" style="width:auto;margin:0"> Activa
-  </label>
+  <label>Notas<input id="sno"></label>
+  <label style="display:flex;align-items:center;gap:8px;margin-top:6px;cursor:pointer"><input type="checkbox" id="sact" style="width:auto;margin:0"> Activa</label>
   <div class="mbtns"><button class="mbtn-c" onclick="closeSusModal()">Cancelar</button><button class="mbtn-g" onclick="saveSus()">Guardar</button></div>
 </div></div>
 
