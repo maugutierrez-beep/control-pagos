@@ -87,7 +87,7 @@ h1{font-size:17px;font-weight:600;margin-bottom:10px}
 .mbtn-c{background:#f1f5f9;color:#64748b}
 .mbtn-s{background:#f1f5f9;color:#334155}
 .mbtn-g{background:#0f172a;color:#fff}
-.prop-new{display:none;margin-top:6px}
+.prop-new{margin-top:6px}
 .prop-new input{font-size:14px;padding:8px 12px}
 @media(max-width:560px){
   .tots{grid-template-columns:repeat(2,1fr)}
@@ -135,7 +135,7 @@ h1{font-size:17px;font-weight:600;margin-bottom:10px}
     <label>Categoría<select id="fc"></select></label>
     <label>Propiedad
       <select id="fp" onchange="onPropChange()"></select>
-      <div class="prop-new" id="propNewBox">
+      <div id="propNewBox" style="display:none;margin-top:6px">
         <input id="fpNew" placeholder="Nueva propiedad…">
       </div>
     </label>
@@ -348,7 +348,12 @@ function openModal(f){
   var fp=document.getElementById("fp");
   var props=allProps();
   fp.innerHTML=props.map(function(p){return'<option value="'+esc(p)+'">'+esc(p)+'</option>'}).join("")+'<option value="__new__">+ Nueva propiedad…</option>';
-  fp.value=f?f.p:"—";
+  var fpVal=f?f.p:"—";
+  if(props.indexOf(fpVal)===-1){
+    // Property not in list — add it so it shows correctly
+    fp.innerHTML+='<option value="'+esc(fpVal)+'">'+esc(fpVal)+'</option>';
+  }
+  fp.value=fpVal;
   document.getElementById("propNewBox").style.display="none";
   document.getElementById("fpNew").value="";
   document.getElementById("fm").value=f?f.m:"";
