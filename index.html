@@ -128,6 +128,32 @@ h1{font-size:17px;font-weight:600;margin-bottom:10px}
   .mbg{align-items:center;padding:16px}
   .mdl{border-radius:16px}
 }
+
+/* Suscripciones */
+.sus-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sus-header .sh-total{font-size:13px;color:#64748b}
+.sus-header .sh-total b{color:#1e293b;font-size:15px}
+.sus-card{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:12px;margin-bottom:7px;display:flex;align-items:center;gap:12px}
+.sus-card.inactiva{opacity:.5}
+.sus-card .si{width:40px;height:40px;border-radius:10px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sus-card .sinfo{flex:1;min-width:0}
+.sus-card .sn{font-weight:600;font-size:14px}
+.sus-card .smeta{font-size:12px;color:#94a3b8;margin-top:2px}
+.sus-card .smeta b{color:#475569}
+.sus-card .stag{font-size:10px;font-weight:600;border-radius:999px;padding:1px 7px;margin-left:4px}
+.sus-card .stag.men{color:#6366f1;background:#eef2ff}
+.sus-card .stag.anu{color:#0369a1;background:#e0f2fe}
+.sus-card .smonto{text-align:right}
+.sus-card .smonto .mv{font-weight:700;font-size:15px}
+.sus-card .smonto .mf{font-size:10px;color:#94a3b8}
+.sus-card .sacc{display:flex;gap:4px;flex-shrink:0}
+.sus-card .sacc button{border:0;background:#f8fafc;cursor:pointer;font-size:12px;font-weight:600;padding:7px 9px;border-radius:8px;min-height:32px;min-width:32px;display:flex;align-items:center;justify-content:center}
+.sus-grp{margin-bottom:16px}
+.sus-grp-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;padding:0 2px}
+.sus-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.sus-sum-card{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:10px 12px}
+.sus-sum-card .sl{font-size:10px;color:#94a3b8;margin-bottom:3px}
+.sus-sum-card .sv{font-size:15px;font-weight:700}
 </style>
 </head><body>
 <div id="app">
@@ -195,7 +221,7 @@ var DEFAULT_PROPS=["—","Verona","Oficina Sierraluna","Santa Marina","Naio Palo
 var MS=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
 var ML=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
 
-var F=[],H=[],vista="porpagar",fCat="Todas",fProp="Todas",editId=null,pgId=null,hMes=null,query="",notaMes="",delDesde="",delHasta="";
+var F=[],H=[],S=[],vista="porpagar",fCat="Todas",fProp="Todas",editId=null,pgId=null,hMes=null,query="",notaMes="",delDesde="",delHasta="";
 
 function sbH(){return{"Content-Type":"application/json","apikey":SB_KEY,"Authorization":"Bearer "+SB_KEY}}
 function sbGet(t){return fetch(SB_URL+"/rest/v1/"+t+"?select=*",{headers:sbH()}).then(function(r){return r.json()})}
@@ -239,8 +265,9 @@ function checkArchive(){
 
 function load(){
   document.getElementById("content").innerHTML='<div class="loading">Cargando…</div>';
-  Promise.all([sbGet("facturas"),sbGet("historico"),sbGet("notas_mes")]).then(function(res){
-    var dbF=res[0],dbH=res[1],dbN=res[2];
+  Promise.all([sbGet("facturas"),sbGet("historico"),sbGet("notas_mes"),sbGet("suscripciones")]).then(function(res){
+    var dbF=res[0],dbH=res[1],dbN=res[2],dbS=res[3];
+    S=Array.isArray(dbS)?dbS:[];
     F=Array.isArray(dbF)?dbF.map(function(f){return Object.assign({},f,{m:Number(f.m),d:Number(f.d)})}):[];
     H=Array.isArray(dbH)?dbH.map(function(h){return Object.assign({},h,{m:Number(h.m)})}):[];
     var nm=Array.isArray(dbN)?dbN.find(function(n){return n.mes===mAct()}):null;
@@ -317,7 +344,7 @@ function render(){
   document.getElementById("searchBox").style.display=(vista==="porpagar"||vista==="pagadas")?"block":"none";
 
   var npg=F.filter(function(f){return est(f)==="pagada"}).length;
-  document.getElementById("tabs").innerHTML=[["porpagar","Por pagar ("+(F.length-npg)+")"],["pagadas","Pagadas ("+npg+")"],["propiedad","Propiedad"],["historico","Histórico"],["delegado","✈ Viaje"]].map(function(x){return'<button class="'+(vista===x[0]?"on":"")+'" onclick="setVista(\''+x[0]+'\')">'+x[1]+'</button>'}).join("");
+  document.getElementById("tabs").innerHTML=[["porpagar","Por pagar ("+(F.length-npg)+")"],["pagadas","Pagadas ("+npg+")"],["propiedad","Propiedad"],["historico","Histórico"],["delegado","✈ Viaje"],["suscripciones","💳 Suscripciones"]].map(function(x){return'<button class="'+(vista===x[0]?"on":"")+'" onclick="setVista(\''+x[0]+'\')">'+x[1]+'</button>'}).join("");
 
   if(vista==="porpagar"||vista==="pagadas"){
     var props=allProps().filter(function(p){return p!=="—"});props.sort();
@@ -391,6 +418,55 @@ function render(){
       html+='<div style="margin-top:8px;font-size:13px;font-weight:700;color:#93c5fd">Total: '+cop(totalViaje)+'</div>';
     }else html+='<div class="di" style="color:#93c5fd">✓ No hay vencimientos en ese período</div>';
     html+='<div class="del-dc"><button class="del-btn-copy" onclick="copiarViaje()">📋 Copiar para WhatsApp</button><button class="del-btn-pdf" onclick="exportarPDF()">⬇ PDF</button></div></div>';
+    ct.innerHTML=html;
+  }
+
+
+  if(vista==="suscripciones"){
+    var activas=S.filter(function(s){return s.activa});
+    var inactivas=S.filter(function(s){return !s.activa});
+    var totalMes=activas.reduce(function(sum,s){
+      if(s.moneda!=="COP")return sum;
+      return sum+(s.frecuencia==="anual"?Math.round(s.monto/12):s.monto);
+    },0);
+    var totalAnual=activas.reduce(function(sum,s){
+      if(s.moneda!=="COP")return sum;
+      return sum+(s.frecuencia==="anual"?s.monto:s.monto*12);
+    },0);
+    // Group by tarjeta
+    var tarjetas={};
+    activas.forEach(function(s){var t=s.tarjeta||"Sin tarjeta";if(!tarjetas[t])tarjetas[t]=[];tarjetas[t].push(s)});
+    var html='<div class="sus-summary">';
+    html+='<div class="sus-sum-card"><div class="sl">Activas</div><div class="sv">'+activas.length+'</div></div>';
+    html+='<div class="sus-sum-card"><div class="sl">Costo mensual</div><div class="sv" style="color:#0d2138">'+cop(totalMes)+'</div></div>';
+    html+='<div class="sus-sum-card"><div class="sl">Costo anual</div><div class="sv" style="color:#475569">'+cop(totalAnual)+'</div></div>';
+    html+='</div>';
+    Object.keys(tarjetas).sort().forEach(function(t){
+      var list=tarjetas[t];
+      var tTotal=list.reduce(function(sum,s){return sum+(s.frecuencia==="anual"?Math.round(s.monto/12):s.monto)},0);
+      html+='<div class="sus-grp"><div class="sus-grp-title">'+esc(t)+' · '+cop(tTotal)+'/mes</div>';
+      list.forEach(function(s){
+        var icon={"Salud":"🏃","Entretenimiento":"🎬","Productividad":"⚡","IA / Tech":"🤖","Música":"🎵","Noticias":"📰","Almacenamiento":"💾","Otros":"📦"}[s.categoria]||"📦";
+        var frqTag=s.frecuencia==="anual"?'<span class="stag anu">Anual</span>':'<span class="stag men">Mensual</span>';
+        var montoMes=s.frecuencia==="anual"?Math.round(s.monto/12):s.monto;
+        var proxFmt=s.proximo_cobro?fmtDate(s.proximo_cobro):"—";
+        html+='<div class="sus-card'+(s.activa?"":" inactiva")+'"><div class="si">'+icon+'</div>';
+        html+='<div class="sinfo"><div class="sn">'+esc(s.n)+frqTag+'</div>';
+        html+='<div class="smeta">'+esc(s.servicio||"")+(s.notas?' · <span style="font-style:italic">'+esc(s.notas)+'</span>':'')+'</div>';
+        html+='<div class="smeta">Próximo cobro: <b>'+proxFmt+'</b></div></div>';
+        html+='<div class="smonto"><div class="mv">'+cop(montoMes)+'</div><div class="mf">/mes</div></div>';
+        html+='<div class="sacc"><button class="edt" onclick="editSus(''+s.id+'')">✎</button><button class="del" onclick="delSus(''+s.id+'')">✕</button></div></div>';
+      });
+      html+='</div>';
+    });
+    if(inactivas.length){
+      html+='<div class="sus-grp"><div class="sus-grp-title">Inactivas ('+inactivas.length+')</div>';
+      inactivas.forEach(function(s){
+        html+='<div class="sus-card inactiva"><div class="si">📦</div><div class="sinfo"><div class="sn">'+esc(s.n)+'</div><div class="smeta">'+esc(s.tarjeta||"")+'</div></div><div class="smonto"><div class="mv">'+cop(s.monto)+'</div></div><div class="sacc"><button class="edt" onclick="editSus(''+s.id+'')">✎</button><button class="del" onclick="delSus(''+s.id+'')">✕</button></div></div>';
+      });
+      html+='</div>';
+    }
+    html+='<button onclick="openSusModal(null)" style="width:100%;padding:12px;background:#f1f5f9;border:1px dashed #cbd5e1;border-radius:10px;font-size:14px;color:#64748b;cursor:pointer;font-weight:600">+ Nueva suscripción</button>';
     ct.innerHTML=html;
   }
 
@@ -502,7 +578,33 @@ function exportarPDF(){
   w.document.write('.total{font-weight:700;font-size:15px;margin-top:16px;text-align:right}');
   w.document.write('.footer{font-size:11px;color:#94a3b8;margin-top:40px;border-top:1px solid #e2e8f0;padding-top:12px}');
   w.document.write('@media print{body{padding:20px}}');
-  w.document.write('</style></head><body>');
+  w.document.write('
+/* Suscripciones */
+.sus-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.sus-header .sh-total{font-size:13px;color:#64748b}
+.sus-header .sh-total b{color:#1e293b;font-size:15px}
+.sus-card{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:12px;margin-bottom:7px;display:flex;align-items:center;gap:12px}
+.sus-card.inactiva{opacity:.5}
+.sus-card .si{width:40px;height:40px;border-radius:10px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.sus-card .sinfo{flex:1;min-width:0}
+.sus-card .sn{font-weight:600;font-size:14px}
+.sus-card .smeta{font-size:12px;color:#94a3b8;margin-top:2px}
+.sus-card .smeta b{color:#475569}
+.sus-card .stag{font-size:10px;font-weight:600;border-radius:999px;padding:1px 7px;margin-left:4px}
+.sus-card .stag.men{color:#6366f1;background:#eef2ff}
+.sus-card .stag.anu{color:#0369a1;background:#e0f2fe}
+.sus-card .smonto{text-align:right}
+.sus-card .smonto .mv{font-weight:700;font-size:15px}
+.sus-card .smonto .mf{font-size:10px;color:#94a3b8}
+.sus-card .sacc{display:flex;gap:4px;flex-shrink:0}
+.sus-card .sacc button{border:0;background:#f8fafc;cursor:pointer;font-size:12px;font-weight:600;padding:7px 9px;border-radius:8px;min-height:32px;min-width:32px;display:flex;align-items:center;justify-content:center}
+.sus-grp{margin-bottom:16px}
+.sus-grp-title{font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;padding:0 2px}
+.sus-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.sus-sum-card{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:10px 12px}
+.sus-sum-card .sl{font-size:10px;color:#94a3b8;margin-bottom:3px}
+.sus-sum-card .sv{font-size:15px;font-weight:700}
+</style></head><body>');
   w.document.write('<h1>Control de Pagos – GVC Capital</h1>');
   w.document.write('<div class="sub">Generado el '+d.getDate()+" "+MS[d.getMonth()]+" "+d.getFullYear()+' · Período viaje: '+fmtDate(delDesde)+' al '+fmtDate(delHasta)+'</div>');
   if(enViaje.length){
@@ -517,7 +619,32 @@ function exportarPDF(){
   w.document.write('</table><div class="total">Total pagado: '+cop(pagadas.reduce(function(s,f){return s+f.m},0))+'</div>');
   if(notaMes)w.document.write('<h2>Nota del mes</h2><p style="font-size:13px">'+esc(notaMes)+'</p>');
   w.document.write('<div class="footer">GVC Capital · control-pagos · '+d.getFullYear()+'</div>');
-  w.document.write('</body></html>');
+  w.document.write('
+<div id="susModal" class="mbg"><div class="mdl">
+  <div class="mh"><b id="susTit"></b><button class="mx" onclick="closeSusModal()">×</button></div>
+  <label>Nombre del servicio<input id="sn"></label>
+  <div class="g2">
+    <label>Categoría<select id="scat">
+      <option>Salud</option><option>Entretenimiento</option><option>Productividad</option>
+      <option>IA / Tech</option><option>Música</option><option>Noticias</option>
+      <option>Almacenamiento</option><option>Otros</option>
+    </select></label>
+    <label>Frecuencia<select id="sfr"><option value="mensual">Mensual</option><option value="anual">Anual</option></select></label>
+  </div>
+  <div class="g2">
+    <label>Monto<input id="sm" type="number" inputmode="numeric"></label>
+    <label>Moneda<select id="smon"><option value="COP">COP</option><option value="USD">USD</option></select></label>
+  </div>
+  <label>Tarjeta de cobro<input id="stc" placeholder="TC Bancolombia *7910…"></label>
+  <label>Próximo cobro<input id="spc" type="date"></label>
+  <label>Descripción / notas<input id="sno"></label>
+  <label style="display:flex;align-items:center;gap:8px;margin-top:6px">
+    <input type="checkbox" id="sact" style="width:auto;margin:0"> Activa
+  </label>
+  <div class="mbtns"><button class="mbtn-c" onclick="closeSusModal()">Cancelar</button><button class="mbtn-g" onclick="saveSus()">Guardar</button></div>
+</div></div>
+
+</body></html>');
   w.document.close();
   setTimeout(function(){w.print()},500);
 }
@@ -578,5 +705,75 @@ function showToast(msg,err){
 }
 
 load();
+
+var susEditId=null;
+function openSusModal(s){
+  susEditId=s?s.id:null;
+  document.getElementById("susTit").textContent=s?"Editar suscripción":"Nueva suscripción";
+  document.getElementById("sn").value=s?s.n:"";
+  document.getElementById("scat").value=s?(s.categoria||"Otros"):"Otros";
+  document.getElementById("sfr").value=s?(s.frecuencia||"mensual"):"mensual";
+  document.getElementById("sm").value=s?s.monto:"";
+  document.getElementById("smon").value=s?(s.moneda||"COP"):"COP";
+  document.getElementById("stc").value=s?(s.tarjeta||""):"";
+  document.getElementById("spc").value=s?(s.proximo_cobro||""):"";
+  document.getElementById("sno").value=s?(s.notas||""):"";
+  document.getElementById("sact").checked=s?s.activa:true;
+  document.getElementById("susModal").classList.add("open");
+}
+function closeSusModal(){document.getElementById("susModal").classList.remove("open")}
+function editSus(id){openSusModal(S.find(function(s){return s.id===id}))}
+function delSus(id){
+  S=S.filter(function(s){return s.id!==id});
+  fetch(SB_URL+"/rest/v1/suscripciones?id=eq."+encodeURIComponent(id),{method:"DELETE",headers:sbH()}).then(function(){render();showToast("Suscripción eliminada.")});
+}
+function saveSus(){
+  var n=document.getElementById("sn").value.trim();
+  if(!n){showToast("Ingresa el nombre.",true);return}
+  var row={
+    id:susEditId||("s"+Date.now()),
+    n:n,
+    servicio:document.getElementById("scat").value,
+    categoria:document.getElementById("scat").value,
+    monto:Number(document.getElementById("sm").value)||0,
+    moneda:document.getElementById("smon").value,
+    frecuencia:document.getElementById("sfr").value,
+    tarjeta:document.getElementById("stc").value.trim(),
+    proximo_cobro:document.getElementById("spc").value||null,
+    activa:document.getElementById("sact").checked,
+    notas:document.getElementById("sno").value.trim()
+  };
+  if(susEditId){var idx=S.findIndex(function(s){return s.id===susEditId});if(idx>-1)S[idx]=row;}
+  else S.push(row);
+  sbUpsert("suscripciones",[row]).then(function(){render();showToast("✓ Suscripción guardada.")});
+  closeSusModal();
+}
+document.getElementById("susModal").addEventListener("click",function(e){if(e.target.id==="susModal")closeSusModal()});
+
 </script>
+
+<div id="susModal" class="mbg"><div class="mdl">
+  <div class="mh"><b id="susTit"></b><button class="mx" onclick="closeSusModal()">×</button></div>
+  <label>Nombre del servicio<input id="sn"></label>
+  <div class="g2">
+    <label>Categoría<select id="scat">
+      <option>Salud</option><option>Entretenimiento</option><option>Productividad</option>
+      <option>IA / Tech</option><option>Música</option><option>Noticias</option>
+      <option>Almacenamiento</option><option>Otros</option>
+    </select></label>
+    <label>Frecuencia<select id="sfr"><option value="mensual">Mensual</option><option value="anual">Anual</option></select></label>
+  </div>
+  <div class="g2">
+    <label>Monto<input id="sm" type="number" inputmode="numeric"></label>
+    <label>Moneda<select id="smon"><option value="COP">COP</option><option value="USD">USD</option></select></label>
+  </div>
+  <label>Tarjeta de cobro<input id="stc" placeholder="TC Bancolombia *7910…"></label>
+  <label>Próximo cobro<input id="spc" type="date"></label>
+  <label>Descripción / notas<input id="sno"></label>
+  <label style="display:flex;align-items:center;gap:8px;margin-top:6px">
+    <input type="checkbox" id="sact" style="width:auto;margin:0"> Activa
+  </label>
+  <div class="mbtns"><button class="mbtn-c" onclick="closeSusModal()">Cancelar</button><button class="mbtn-g" onclick="saveSus()">Guardar</button></div>
+</div></div>
+
 </body></html>
