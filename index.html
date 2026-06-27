@@ -158,6 +158,21 @@ h1{font-size:17px;font-weight:600;margin-bottom:10px}
   .mbg{align-items:center;padding:16px}
   .mdl{border-radius:16px}
 }
+
+/* Status banner */
+.status-banner{border-radius:14px;padding:16px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.status-banner.all-good{background:linear-gradient(135deg,#15803d,#16a34a)}
+.status-banner.warning{background:linear-gradient(135deg,#b45309,#d97706)}
+.status-banner.urgent{background:linear-gradient(135deg,#991b1b,#dc2626)}
+.status-banner .sb-left{}
+.status-banner .sb-icon{font-size:28px;margin-bottom:2px}
+.status-banner .sb-title{font-size:20px;font-weight:800;color:#fff;line-height:1.1}
+.status-banner .sb-sub{font-size:13px;color:rgba(255,255,255,.8);margin-top:3px}
+.status-banner .sb-next{text-align:right}
+.status-banner .sb-next-lbl{font-size:11px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.status-banner .sb-next-val{font-size:16px;font-weight:700;color:#fff}
+.status-banner .sb-next-name{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px}
+
 </style>
 </head>
 <body>
@@ -366,12 +381,91 @@ function renderCal(){
 }
 function calClick(day){calSelDay=calSelDay===day?null:day;var el=document.getElementById("calContainer");if(el)el.innerHTML=renderCal()}
 
+
+function renderBanner(){
+  var pend=F.filter(function(f){return est(f)!=="pagada"});
+  var venc=pend.filter(function(f){return fV(f).dif<0});
+  var hoy0=pend.filter(function(f){return fV(f).dif===0});
+  var man=pend.filter(function(f){return fV(f).dif===1});
+  var future=pend.filter(function(f){return fV(f).dif>1}).sort(function(a,b){return fV(a).dif-fV(b).dif});
+
+  var html='';
+
+  if(venc.length){
+    // URGENT: overdue
+    html='<div class="status-banner urgent">';
+    html+='<div class="sb-left"><div class="sb-icon">⚠️</div>';
+    html+='<div class="sb-title">'+venc.length+' vencida'+(venc.length>1?"s":"")+'</div>';
+    html+='<div class="sb-sub">'+cop(venc.reduce(function(s,f){return s+f.m},0))+' sin pagar · acción requerida</div></div>';
+    if(future.length){
+      var nxt=future[0];var dd=fV(nxt).dif;
+      html+='<div class="sb-next"><div class="sb-next-lbl">Próximo</div><div class="sb-next-val">en '+dd+'d</div><div class="sb-next-name">'+esc(nxt.n)+'</div></div>';
+    }
+    html+='</div>';
+  } else if(hoy0.length){
+    // Today
+    html='<div class="status-banner urgent">';
+    html+='<div class="sb-left"><div class="sb-icon">🔴</div>';
+    html+='<div class="sb-title">Pagar hoy</div>';
+    html+='<div class="sb-sub">'+hoy0.map(function(f){return esc(f.n)}).join(", ")+' · '+cop(hoy0.reduce(function(s,f){return s+f.m},0))+'</div></div>';
+    if(future.length){
+      var nxt=future[0];var dd=fV(nxt).dif;
+      html+='<div class="sb-next"><div class="sb-next-lbl">Siguiente</div><div class="sb-next-val">en '+dd+'d</div><div class="sb-next-name">'+esc(nxt.n)+'</div></div>';
+    }
+    html+='</div>';
+  } else if(man.length){
+    // Tomorrow
+    html='<div class="status-banner warning">';
+    html+='<div class="sb-left"><div class="sb-icon">🟡</div>';
+    html+='<div class="sb-title">Pagar mañana</div>';
+    html+='<div class="sb-sub">'+man.map(function(f){return esc(f.n)}).join(", ")+' · '+cop(man.reduce(function(s,f){return s+f.m},0))+'</div></div>';
+    if(future.length){
+      var nxt=future[0];var dd=fV(nxt).dif;
+      html+='<div class="sb-next"><div class="sb-next-lbl">Siguiente</div><div class="sb-next-val">en '+dd+'d</div><div class="sb-next-name">'+esc(nxt.n)+'</div></div>';
+    }
+    html+='</div>';
+  } else if(future.length){
+    // All good - show next payment
+    var nxt=future[0];
+    var dd=fV(nxt).dif;
+    var dif2=fV(future.length>1?future[1]:nxt).dif;
+    // Calculate hours to midnight of due date
+    var dueDate=fV(nxt).fecha;
+    var now=hoy();
+    var msLeft=dueDate-now;
+    var hoursLeft=Math.floor(msLeft/36e5);
+    var timeStr=dd===0?"hoy":dd===1?"mañana":dd<=7?"en "+dd+" días":"en "+dd+" días";
+
+    // Group all on same day
+    var sameDay=future.filter(function(f){return fV(f).dif===dd});
+    var totalNext=sameDay.reduce(function(s,f){return s+f.m},0);
+    var names=sameDay.length>1?sameDay.length+" facturas":esc(sameDay[0].n);
+
+    html='<div class="status-banner all-good">';
+    html+='<div class="sb-left"><div class="sb-icon">✅</div>';
+    html+='<div class="sb-title">¡Al día!</div>';
+    html+='<div class="sb-sub">'+cop(F.filter(function(f){return est(f)==="pagada"}).reduce(function(s,f){return s+f.m},0))+' pagado este mes</div></div>';
+    html+='<div class="sb-next"><div class="sb-next-lbl">Próximo pago</div><div class="sb-next-val">'+timeStr+'</div><div class="sb-next-name">'+names+' · '+cop(totalNext)+'</div></div>';
+    html+='</div>';
+  } else {
+    // Everything paid
+    html='<div class="status-banner all-good">';
+    html+='<div class="sb-left"><div class="sb-icon">🎉</div>';
+    html+='<div class="sb-title">¡Todo pagado!</div>';
+    html+='<div class="sb-sub">No hay pagos pendientes este mes</div></div>';
+    html+='</div>';
+  }
+  return html;
+}
+
 function render(){
   var base=F.filter(function(f){return(fCat==="Todas"||f.c===fCat)&&(fProp==="Todas"||f.p===fProp)&&mQ(f)});
   var allM=F.reduce(function(s,f){return s+f.m},0);
   var pgM=F.filter(function(f){return est(f)==="pagada"}).reduce(function(s,f){return s+f.m},0);
   var pct=allM>0?Math.round(pgM/allM*100):0;
-  document.getElementById("progress").innerHTML='<div class="pbar"><div class="plbl"><span>'+pct+'% pagado</span><b>Falta: '+cop(allM-pgM)+'</b></div><div class="ptrack"><div class="pfill" style="width:'+pct+'%"></div></div></div>';
+  var bannerHtml=renderBanner();
+  var pbarHtml='<div class="pbar"><div class="plbl"><span>'+pct+'% pagado</span><b>Falta: '+cop(allM-pgM)+'</b></div><div class="ptrack"><div class="pfill" style="width:'+pct+'%"></div></div></div>';
+  document.getElementById("progress").innerHTML=bannerHtml+pbarHtml;
   document.getElementById("notames").innerHTML='<div class="nota-mes"><div class="nlbl">📝 Nota de '+mLbl(mAct())+'</div><textarea id="notaInput" placeholder="Observaciones del mes…">'+esc(notaMes)+'</textarea><button class="nsave" onclick="saveNota()">Guardar</button></div>';
 
   var t=0,pg=0,pe=0,ve=0;
@@ -637,7 +731,22 @@ function exportarPDF(){
   var d=hoy();
   var w=window.open("","_blank");
   w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>GVC Capital – Control de Pagos</title>');
-  w.document.write('<style>body{font-family:-apple-system,sans-serif;color:#1e293b;padding:40px;max-width:700px;margin:0 auto}h1{font-size:22px;margin-bottom:4px}h2{font-size:14px;font-weight:700;color:#0d2138;margin:20px 0 10px;padding-bottom:4px;border-bottom:2px solid #0d2138}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;padding:6px 8px;background:#f1f5f9;font-weight:600}td{padding:6px 8px;border-bottom:1px solid #f1f5f9}.sub{font-size:13px;color:#64748b;margin-bottom:24px}.total{font-weight:700;font-size:15px;margin-top:12px;text-align:right}.footer{font-size:11px;color:#94a3b8;margin-top:40px;padding-top:12px;border-top:1px solid #e2e8f0}</style></head><body>');
+  w.document.write('<style>body{font-family:-apple-system,sans-serif;color:#1e293b;padding:40px;max-width:700px;margin:0 auto}h1{font-size:22px;margin-bottom:4px}h2{font-size:14px;font-weight:700;color:#0d2138;margin:20px 0 10px;padding-bottom:4px;border-bottom:2px solid #0d2138}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;padding:6px 8px;background:#f1f5f9;font-weight:600}td{padding:6px 8px;border-bottom:1px solid #f1f5f9}.sub{font-size:13px;color:#64748b;margin-bottom:24px}.total{font-weight:700;font-size:15px;margin-top:12px;text-align:right}.footer{font-size:11px;color:#94a3b8;margin-top:40px;padding-top:12px;border-top:1px solid #e2e8f0}
+/* Status banner */
+.status-banner{border-radius:14px;padding:16px 20px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.status-banner.all-good{background:linear-gradient(135deg,#15803d,#16a34a)}
+.status-banner.warning{background:linear-gradient(135deg,#b45309,#d97706)}
+.status-banner.urgent{background:linear-gradient(135deg,#991b1b,#dc2626)}
+.status-banner .sb-left{}
+.status-banner .sb-icon{font-size:28px;margin-bottom:2px}
+.status-banner .sb-title{font-size:20px;font-weight:800;color:#fff;line-height:1.1}
+.status-banner .sb-sub{font-size:13px;color:rgba(255,255,255,.8);margin-top:3px}
+.status-banner .sb-next{text-align:right}
+.status-banner .sb-next-lbl{font-size:11px;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+.status-banner .sb-next-val{font-size:16px;font-weight:700;color:#fff}
+.status-banner .sb-next-name{font-size:12px;color:rgba(255,255,255,.8);margin-top:2px}
+
+</style></head><body>');
   w.document.write('<h1>Control de Pagos – GVC Capital</h1><div class="sub">'+d.getDate()+" "+MS[d.getMonth()]+" "+d.getFullYear()+" · Viaje: "+fmtD(delD)+" al "+fmtD(delH)+'</div>');
   if(vj.length){
     w.document.write('<h2>Vencimientos durante el viaje</h2><table><tr><th>Concepto</th><th>Propiedad</th><th>Vence</th><th style="text-align:right">Monto</th></tr>');
