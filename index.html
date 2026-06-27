@@ -373,21 +373,27 @@ function renderBanner() {
     html += '</div>';
   } else if(hoy0.length) {
     var th = hoy0.reduce(function(s,f){ return s+f.m; },0);
-    html = '<div class="sbanner red"><div class="sb-left"><div class="sb-icon">🔴</div><div class="sb-title">Pagar hoy</div><div class="sb-sub">'+hoy0.map(function(f){ return esc(f.n); }).join(", ")+" · "+cop(th)+'</div></div>';
-    if(fut.length) html += '<div class="sb-next"><div class="sb-next-lbl">Siguiente</div><div class="sb-next-val">en '+fV(fut[0]).dif+'d</div><div class="sb-next-name">'+esc(fut[0].n)+'</div></div>';
+    var hoyFecha = fV(hoy0[0]).fecha;
+    var hoyStr2 = hoyFecha.getDate()+" "+MS[hoyFecha.getMonth()];
+    html = '<div class="sbanner red"><div class="sb-left"><div class="sb-icon">🔴</div><div class="sb-title">Vence hoy '+hoyStr2+'</div><div class="sb-sub">'+hoy0.map(function(f){ return esc(f.n); }).join(", ")+" · "+cop(th)+'</div></div>';
+    if(fut.length){ var nfh=fut[0],ndh=fV(nfh).dif,nfhd=fV(nfh).fecha; html += '<div class="sb-next"><div class="sb-next-lbl">Siguiente</div><div class="sb-next-val">'+nfhd.getDate()+" "+MS[nfhd.getMonth()]+'</div><div class="sb-next-name">'+esc(nfh.n)+'</div></div>'; }
     html += '</div>';
   } else if(man.length) {
     var tm = man.reduce(function(s,f){ return s+f.m; },0);
-    html = '<div class="sbanner amb"><div class="sb-left"><div class="sb-icon">🟡</div><div class="sb-title">Pagar mañana</div><div class="sb-sub">'+man.map(function(f){ return esc(f.n); }).join(", ")+" · "+cop(tm)+'</div></div>';
-    if(fut.length) html += '<div class="sb-next"><div class="sb-next-lbl">Siguiente</div><div class="sb-next-val">en '+fV(fut[0]).dif+'d</div><div class="sb-next-name">'+esc(fut[0].n)+'</div></div>';
+    var manFecha = fV(man[0]).fecha;
+    var manStr = manFecha.getDate()+" "+MS[manFecha.getMonth()];
+    html = '<div class="sbanner amb"><div class="sb-left"><div class="sb-icon">🟡</div><div class="sb-title">Vence el '+manStr+'</div><div class="sb-sub">'+man.map(function(f){ return esc(f.n); }).join(", ")+" · "+cop(tm)+'</div></div>';
+    if(fut.length){ var nf2=fut[0],nd2=fV(nf2).dif,nf2d=fV(nf2).fecha; html += '<div class="sb-next"><div class="sb-next-lbl">Siguiente</div><div class="sb-next-val">'+nf2d.getDate()+" "+MS[nf2d.getMonth()]+'</div><div class="sb-next-name">'+esc(nf2.n)+'</div></div>'; }
     html += '</div>';
   } else if(fut.length) {
     var nd = fV(fut[0]).dif;
+    var ndFecha = fV(fut[0]).fecha;
+    var ndStr = ndFecha.getDate()+" "+MS[ndFecha.getMonth()];
     var sg = fut.filter(function(f){ return fV(f).dif===nd; });
     var tg = sg.reduce(function(s,f){ return s+f.m; },0);
     var nm2 = sg.length>1 ? sg.length+" facturas" : esc(sg[0].n);
     html = '<div class="sbanner grn"><div class="sb-left"><div class="sb-icon">✅</div><div class="sb-title">¡Al día!</div><div class="sb-sub">'+cop(pagadoMes)+' pagado este mes</div></div>';
-    html += '<div class="sb-next"><div class="sb-next-lbl">Próximo pago</div><div class="sb-next-val">en '+nd+' días</div><div class="sb-next-name">'+nm2+" · "+cop(tg)+'</div></div></div>';
+    html += '<div class="sb-next"><div class="sb-next-lbl">Próximo pago · en '+nd+'d</div><div class="sb-next-val">'+ndStr+'</div><div class="sb-next-name">'+nm2+" · "+cop(tg)+'</div></div></div>';
   } else {
     html = '<div class="sbanner grn"><div class="sb-left"><div class="sb-icon">🎉</div><div class="sb-title">¡Todo pagado!</div><div class="sb-sub">'+cop(pagadoMes)+' pagado este mes</div></div></div>';
   }
@@ -502,7 +508,7 @@ function render() {
     var rowsHtml = list.map(function(f){
       var e=est(f), r=fV(f);
       var fs = r.fecha.getDate()+" "+MS[r.fecha.getMonth()]+" "+r.fecha.getFullYear();
-      var rel = r.dif<0?"venció hace "+Math.abs(r.dif)+"d":r.dif===0?"hoy":r.dif===1?"mañana":"en "+r.dif+"d";
+      var rel = r.dif<0?"venció hace "+Math.abs(r.dif)+" días":r.dif===0?"hoy":r.dif===1?"mañana":"en "+r.dif+" días";
       var pt = f.p&&f.p!=="—" ? '<span class="ptag">'+esc(f.p)+'</span>' : "";
       var cpArr = [];
       if(f.pf) cpArr.push("Pagado el "+fmtD(f.pf));
