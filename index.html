@@ -388,72 +388,46 @@ function renderBanner(){
   var hoy0=pend.filter(function(f){return fV(f).dif===0});
   var man=pend.filter(function(f){return fV(f).dif===1});
   var future=pend.filter(function(f){return fV(f).dif>1}).sort(function(a,b){return fV(a).dif-fV(b).dif});
-
-  var html='';
+  var html="";
+  var nxtBill=future.length?future[0]:null;
+  var nxtDd=nxtBill?fV(nxtBill).dif:0;
+  var nxtHtml=nxtBill?'<div class="sb-next"><div class="sb-next-lbl">Siguiente</div><div class="sb-next-val">en '+nxtDd+'d</div><div class="sb-next-name">'+esc(nxtBill.n)+'</div></div>':"";
 
   if(venc.length){
-    // URGENT: overdue
     html='<div class="status-banner urgent">';
     html+='<div class="sb-left"><div class="sb-icon">⚠️</div>';
     html+='<div class="sb-title">'+venc.length+' vencida'+(venc.length>1?"s":"")+'</div>';
-    html+='<div class="sb-sub">'+cop(venc.reduce(function(s,f){return s+f.m},0))+' sin pagar · acción requerida</div></div>';
-    if(future.length){
-      var nxt=future[0];var dd=fV(nxt).dif;
-      html+='<div class="sb-next"><div class="sb-next-lbl">Próximo</div><div class="sb-next-val">en '+dd+'d</div><div class="sb-next-name">'+esc(nxt.n)+'</div></div>';
-    }
-    html+='</div>';
+    html+='<div class="sb-sub">'+cop(venc.reduce(function(s,f){return s+f.m;},0))+' sin pagar · acción requerida</div></div>';
+    html+=nxtHtml+'</div>';
   } else if(hoy0.length){
-    // Today
     html='<div class="status-banner urgent">';
     html+='<div class="sb-left"><div class="sb-icon">🔴</div>';
     html+='<div class="sb-title">Pagar hoy</div>';
-    html+='<div class="sb-sub">'+hoy0.map(function(f){return esc(f.n)}).join(", ")+' · '+cop(hoy0.reduce(function(s,f){return s+f.m},0))+'</div></div>';
-    if(future.length){
-      var nxt=future[0];var dd=fV(nxt).dif;
-      html+='<div class="sb-next"><div class="sb-next-lbl">Siguiente</div><div class="sb-next-val">en '+dd+'d</div><div class="sb-next-name">'+esc(nxt.n)+'</div></div>';
-    }
-    html+='</div>';
+    html+='<div class="sb-sub">'+hoy0.map(function(f){return esc(f.n);}).join(", ")+' · '+cop(hoy0.reduce(function(s,f){return s+f.m;},0))+'</div></div>';
+    html+=nxtHtml+'</div>';
   } else if(man.length){
-    // Tomorrow
     html='<div class="status-banner warning">';
     html+='<div class="sb-left"><div class="sb-icon">🟡</div>';
     html+='<div class="sb-title">Pagar mañana</div>';
-    html+='<div class="sb-sub">'+man.map(function(f){return esc(f.n)}).join(", ")+' · '+cop(man.reduce(function(s,f){return s+f.m},0))+'</div></div>';
-    if(future.length){
-      var nxt=future[0];var dd=fV(nxt).dif;
-      html+='<div class="sb-next"><div class="sb-next-lbl">Siguiente</div><div class="sb-next-val">en '+dd+'d</div><div class="sb-next-name">'+esc(nxt.n)+'</div></div>';
-    }
-    html+='</div>';
+    html+='<div class="sb-sub">'+man.map(function(f){return esc(f.n);}).join(", ")+' · '+cop(man.reduce(function(s,f){return s+f.m;},0))+'</div></div>';
+    html+=nxtHtml+'</div>';
   } else if(future.length){
-    // All good - show next payment
-    var nxt=future[0];
-    var dd=fV(nxt).dif;
-    var dif2=fV(future.length>1?future[1]:nxt).dif;
-    // Calculate hours to midnight of due date
-    var dueDate=fV(nxt).fecha;
-    var now=hoy();
-    var msLeft=dueDate-now;
-    var hoursLeft=Math.floor(msLeft/36e5);
-    var timeStr=dd===0?"hoy":dd===1?"mañana":dd<=7?"en "+dd+" días":"en "+dd+" días";
-
-    // Group all on same day
-    var sameDay=future.filter(function(f){return fV(f).dif===dd});
-    var totalNext=sameDay.reduce(function(s,f){return s+f.m},0);
+    var sameDay=future.filter(function(f){return fV(f).dif===nxtDd});
+    var totalNext=sameDay.reduce(function(s,f){return s+f.m;},0);
     var names=sameDay.length>1?sameDay.length+" facturas":esc(sameDay[0].n);
-
+    var timeStr=nxtDd<=7?"en "+nxtDd+" días":"en "+nxtDd+" días";
+    var pagadoMes=F.filter(function(f){return est(f)==="pagada"}).reduce(function(s,f){return s+f.m;},0);
     html='<div class="status-banner all-good">';
     html+='<div class="sb-left"><div class="sb-icon">✅</div>';
     html+='<div class="sb-title">¡Al día!</div>';
-    html+='<div class="sb-sub">'+cop(F.filter(function(f){return est(f)==="pagada"}).reduce(function(s,f){return s+f.m},0))+' pagado este mes</div></div>';
+    html+='<div class="sb-sub">'+cop(pagadoMes)+' pagado este mes</div></div>';
     html+='<div class="sb-next"><div class="sb-next-lbl">Próximo pago</div><div class="sb-next-val">'+timeStr+'</div><div class="sb-next-name">'+names+' · '+cop(totalNext)+'</div></div>';
     html+='</div>';
   } else {
-    // Everything paid
     html='<div class="status-banner all-good">';
     html+='<div class="sb-left"><div class="sb-icon">🎉</div>';
     html+='<div class="sb-title">¡Todo pagado!</div>';
-    html+='<div class="sb-sub">No hay pagos pendientes este mes</div></div>';
-    html+='</div>';
+    html+='<div class="sb-sub">No hay pagos pendientes</div></div></div>';
   }
   return html;
 }
