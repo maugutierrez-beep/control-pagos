@@ -186,6 +186,20 @@ h1{font-size:17px;font-weight:600;margin-bottom:10px}
   .mbg{align-items:center;padding:16px}
   .mdl{border-radius:16px}
 }
+
+.trend-card{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:12px 14px;margin-bottom:7px}
+.trend-card .th{display:flex;justify-content:space-between;align-items:center}
+.trend-card .tn{font-weight:600;font-size:14px}
+.trend-card .tcur{font-weight:700;font-size:15px}
+.trend-card .tcmp{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px}
+.trend-up{color:#dc2626;font-weight:600}
+.trend-down{color:#15803d;font-weight:600}
+.trend-flat{color:#94a3b8;font-weight:600}
+.trend-card .thist{font-size:11px;color:#94a3b8;margin-top:6px}
+.trend-spark{display:flex;align-items:flex-end;gap:3px;height:32px;margin-top:8px}
+.trend-spark .sb{flex:1;background:#e2e8f0;border-radius:2px 2px 0 0;min-height:3px}
+.trend-spark .sb.last{background:#0d2138}
+
 </style>
 </head>
 <body>
@@ -488,7 +502,7 @@ function render() {
   document.getElementById("searchBox").style.display = (vista==="porpagar"||vista==="pagadas") ? "block" : "none";
 
   var npg = F.filter(function(f){ return est(f)==="pagada"; }).length;
-  document.getElementById("tabs").innerHTML = [["porpagar","Por pagar ("+(F.length-npg)+")"],["pagadas","Pagadas ("+npg+")"],["propiedad","Propiedad"],["historico","Histórico"],["delegado","✈ Viaje"],["suscripciones","💳 Suscripciones"]].map(function(x){ return '<button class="'+(vista===x[0]?"on":"")+'" onclick="setVista(\''+x[0]+'\')">'+x[1]+'</button>'; }).join("");
+  document.getElementById("tabs").innerHTML = [["porpagar","Por pagar ("+(F.length-npg)+")"],["pagadas","Pagadas ("+npg+")"],["propiedad","Propiedad"],["historico","Histórico"],["delegado","✈ Viaje"],["suscripciones","💳 Suscripciones"],["tendencia","📈 Tendencia"]].map(function(x){ return '<button class="'+(vista===x[0]?"on":"")+'" onclick="setVista(\''+x[0]+'\')">'+x[1]+'</button>'; }).join("");
 
   if(vista==="porpagar"||vista==="pagadas") {
     var props = allProps().filter(function(p){ return p!=="—"; }); props.sort();
@@ -617,6 +631,54 @@ function render() {
     ct.innerHTML = html;
   }
 
+
+  else if(vista==="tendencia") {
+    // Build history map: concept name -> [{mes, monto}]
+    var byName = {};
+    H.forEach(function(h){
+      if(!byName[h.n]) byName[h.n]=[];
+      byName[h.n].push({mes:h.mes, m:h.m});
+    });
+    // Also include current month bills as latest data point
+    F.forEach(function(f){
+      if(f.m<=0) return;
+      if(!byName[f.n]) byName[f.n]=[];
+      // only add if not already from history this month
+      var hasCurrent = byName[f.n].some(function(x){ return x.mes===mAct(); });
+      if(!hasCurrent) byName[f.n].push({mes:mAct(), m:f.m});
+    });
+    var names = Object.keys(byName).filter(function(n){ return byName[n].length>=1; });
+    // Sort: those with most change first
+    var html = '';
+    if(!names.length || H.length===0) {
+      html = '<div class="empty">La tendencia se construye con el histórico mensual.<br>A medida que se archiven los pagos de cada mes, aquí verás si cada factura sube o baja.</div>';
+    } else {
+      names.sort(function(a,b){ return byName[b].length-byName[a].length; });
+      names.forEach(function(name){
+        var serie = byName[name].sort(function(a,b){ return a.mes<b.mes?-1:1; });
+        if(serie.length<2){
+          // Only one data point - show current
+          var only = serie[0];
+          html += '<div class="trend-card"><div class="th"><span class="tn">'+esc(name)+'</span><span class="tcur">'+cop(only.m)+'</span></div><div class="thist">Solo '+mLbl(only.mes)+' · sin comparación aún</div></div>';
+          return;
+        }
+        var last = serie[serie.length-1];
+        var prev = serie[serie.length-2];
+        var diff = last.m-prev.m;
+        var pct = prev.m>0 ? Math.round(diff/prev.m*100) : 0;
+        var arrow = diff>0?"▲":diff<0?"▼":"=";
+        var cls = diff>0?"trend-up":diff<0?"trend-down":"trend-flat";
+        var cmpTxt = diff===0 ? "Sin cambio vs "+mLbl(prev.mes) : arrow+" "+cop(Math.abs(diff))+" ("+(pct>0?"+":"")+pct+"%) vs "+mLbl(prev.mes);
+        // Sparkline
+        var maxM = Math.max.apply(null, serie.map(function(x){ return x.m; }));
+        var spark = '<div class="trend-spark">'+serie.map(function(x,i){ var h=maxM>0?Math.round(x.m/maxM*32):3; return '<div class="sb'+(i===serie.length-1?" last":"")+'" style="height:'+Math.max(3,h)+'px" title="'+mLbl(x.mes)+': '+cop(x.m)+'"></div>'; }).join("")+'</div>';
+        var histTxt = serie.map(function(x){ return mLbl(x.mes).split(" ")[0]+": "+cop(x.m); }).join(" · ");
+        html += '<div class="trend-card"><div class="th"><span class="tn">'+esc(name)+'</span><span class="tcur">'+cop(last.m)+'</span></div><div class="tcmp"><span class="'+cls+'">'+cmpTxt+'</span></div>'+spark+'<div class="thist">'+histTxt+'</div></div>';
+      });
+    }
+    ct.innerHTML = html;
+  }
+
   document.getElementById("backup").innerHTML = '<div class="bkp"><button onclick="descargar()">⬇ Descargar respaldo</button></div>';
 }
 
@@ -699,7 +761,21 @@ function exportarPDF(){
   var pagadas=F.filter(function(f){ return est(f)==="pagada"; });
   var d=hoy();
   var w=window.open("","_blank");
-  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>GVC Capital</title><style>body{font-family:sans-serif;color:#1e293b;padding:40px;max-width:700px;margin:0 auto}h1{font-size:22px;margin-bottom:4px}h2{font-size:14px;font-weight:700;color:#0d2138;margin:20px 0 10px;padding-bottom:4px;border-bottom:2px solid #0d2138}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;padding:6px 8px;background:#f1f5f9;font-weight:600}td{padding:6px 8px;border-bottom:1px solid #f1f5f9}.sub{font-size:13px;color:#64748b;margin-bottom:24px}.tot{font-weight:700;font-size:15px;margin-top:12px;text-align:right}.ft{font-size:11px;color:#94a3b8;margin-top:40px;padding-top:12px;border-top:1px solid #e2e8f0}</style></head><body>');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>GVC Capital</title><style>body{font-family:sans-serif;color:#1e293b;padding:40px;max-width:700px;margin:0 auto}h1{font-size:22px;margin-bottom:4px}h2{font-size:14px;font-weight:700;color:#0d2138;margin:20px 0 10px;padding-bottom:4px;border-bottom:2px solid #0d2138}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;padding:6px 8px;background:#f1f5f9;font-weight:600}td{padding:6px 8px;border-bottom:1px solid #f1f5f9}.sub{font-size:13px;color:#64748b;margin-bottom:24px}.tot{font-weight:700;font-size:15px;margin-top:12px;text-align:right}.ft{font-size:11px;color:#94a3b8;margin-top:40px;padding-top:12px;border-top:1px solid #e2e8f0}
+.trend-card{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:12px 14px;margin-bottom:7px}
+.trend-card .th{display:flex;justify-content:space-between;align-items:center}
+.trend-card .tn{font-weight:600;font-size:14px}
+.trend-card .tcur{font-weight:700;font-size:15px}
+.trend-card .tcmp{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px}
+.trend-up{color:#dc2626;font-weight:600}
+.trend-down{color:#15803d;font-weight:600}
+.trend-flat{color:#94a3b8;font-weight:600}
+.trend-card .thist{font-size:11px;color:#94a3b8;margin-top:6px}
+.trend-spark{display:flex;align-items:flex-end;gap:3px;height:32px;margin-top:8px}
+.trend-spark .sb{flex:1;background:#e2e8f0;border-radius:2px 2px 0 0;min-height:3px}
+.trend-spark .sb.last{background:#0d2138}
+
+</style></head><body>');
   w.document.write('<h1>Control de Pagos – GVC Capital</h1><div class="sub">'+d.getDate()+" "+MS[d.getMonth()]+" "+d.getFullYear()+" · Viaje: "+fmtD(delD)+" al "+fmtD(delH)+'</div>');
   if(vj.length){ w.document.write('<h2>Vencimientos durante el viaje</h2><table><tr><th>Concepto</th><th>Propiedad</th><th>Vence</th><th style="text-align:right">Monto</th></tr>'); vj.forEach(function(f){ var r=fV(f); w.document.write('<tr><td>'+f.n+'</td><td>'+(f.p&&f.p!=="—"?f.p:"—")+'</td><td>'+r.fecha.getDate()+" "+MS[r.fecha.getMonth()]+'</td><td style="text-align:right;font-weight:600">'+cop(f.m)+'</td></tr>'); }); w.document.write('</table><div class="tot">Total: '+cop(vj.reduce(function(s,f){ return s+f.m; },0))+'</div>'); }
   w.document.write('<h2>Ya pagado este mes</h2><table><tr><th>Concepto</th><th>Fecha pago</th><th>Comprobante</th><th style="text-align:right">Monto</th></tr>');
