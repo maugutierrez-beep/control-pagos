@@ -761,21 +761,7 @@ function exportarPDF(){
   var pagadas=F.filter(function(f){ return est(f)==="pagada"; });
   var d=hoy();
   var w=window.open("","_blank");
-  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>GVC Capital</title><style>body{font-family:sans-serif;color:#1e293b;padding:40px;max-width:700px;margin:0 auto}h1{font-size:22px;margin-bottom:4px}h2{font-size:14px;font-weight:700;color:#0d2138;margin:20px 0 10px;padding-bottom:4px;border-bottom:2px solid #0d2138}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;padding:6px 8px;background:#f1f5f9;font-weight:600}td{padding:6px 8px;border-bottom:1px solid #f1f5f9}.sub{font-size:13px;color:#64748b;margin-bottom:24px}.tot{font-weight:700;font-size:15px;margin-top:12px;text-align:right}.ft{font-size:11px;color:#94a3b8;margin-top:40px;padding-top:12px;border-top:1px solid #e2e8f0}
-.trend-card{background:#fff;border:1px solid #e8edf3;border-radius:11px;padding:12px 14px;margin-bottom:7px}
-.trend-card .th{display:flex;justify-content:space-between;align-items:center}
-.trend-card .tn{font-weight:600;font-size:14px}
-.trend-card .tcur{font-weight:700;font-size:15px}
-.trend-card .tcmp{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px}
-.trend-up{color:#dc2626;font-weight:600}
-.trend-down{color:#15803d;font-weight:600}
-.trend-flat{color:#94a3b8;font-weight:600}
-.trend-card .thist{font-size:11px;color:#94a3b8;margin-top:6px}
-.trend-spark{display:flex;align-items:flex-end;gap:3px;height:32px;margin-top:8px}
-.trend-spark .sb{flex:1;background:#e2e8f0;border-radius:2px 2px 0 0;min-height:3px}
-.trend-spark .sb.last{background:#0d2138}
-
-</style></head><body>');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>GVC Capital</title><style>body{font-family:sans-serif;color:#1e293b;padding:40px;max-width:700px;margin:0 auto}h1{font-size:22px;margin-bottom:4px}h2{font-size:14px;font-weight:700;color:#0d2138;margin:20px 0 10px;padding-bottom:4px;border-bottom:2px solid #0d2138}table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;padding:6px 8px;background:#f1f5f9;font-weight:600}td{padding:6px 8px;border-bottom:1px solid #f1f5f9}.sub{font-size:13px;color:#64748b;margin-bottom:24px}.tot{font-weight:700;font-size:15px;margin-top:12px;text-align:right}.ft{font-size:11px;color:#94a3b8;margin-top:40px;padding-top:12px;border-top:1px solid #e2e8f0}</style></head><body>');
   w.document.write('<h1>Control de Pagos – GVC Capital</h1><div class="sub">'+d.getDate()+" "+MS[d.getMonth()]+" "+d.getFullYear()+" · Viaje: "+fmtD(delD)+" al "+fmtD(delH)+'</div>');
   if(vj.length){ w.document.write('<h2>Vencimientos durante el viaje</h2><table><tr><th>Concepto</th><th>Propiedad</th><th>Vence</th><th style="text-align:right">Monto</th></tr>'); vj.forEach(function(f){ var r=fV(f); w.document.write('<tr><td>'+f.n+'</td><td>'+(f.p&&f.p!=="—"?f.p:"—")+'</td><td>'+r.fecha.getDate()+" "+MS[r.fecha.getMonth()]+'</td><td style="text-align:right;font-weight:600">'+cop(f.m)+'</td></tr>'); }); w.document.write('</table><div class="tot">Total: '+cop(vj.reduce(function(s,f){ return s+f.m; },0))+'</div>'); }
   w.document.write('<h2>Ya pagado este mes</h2><table><tr><th>Concepto</th><th>Fecha pago</th><th>Comprobante</th><th style="text-align:right">Monto</th></tr>');
